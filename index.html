@@ -1,70 +1,376 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Web Serial API Console</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交流回路のベクトル計算演習（Web版）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        let port;
-
-        async function onConnectButtonClick() {
-            try {
-                port = await navigator.serial.requestPort();
-                await port.open({ baudRate: 115200 });
-
-                while (port.readable) {
-                    const reader = port.readable.getReader();
-
-                    try {
-                        while (true) {
-                            const { value, done } = await reader.read();
-                            if (done) {
-                                addSerial("Canceled\n");
-                                break;
-                            }
-                            const inputValue = new TextDecoder().decode(value);
-                            addSerial(inputValue);
-                        }
-                    } catch (error) {
-                        addSerial("Error: Read" + error + "\n");
-                    } finally {
-                        reader.releaseLock();
-                    }
-                }
-            } catch (error) {
-                addSerial("Error: Open" + error + "\n");
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
             }
-        }
-
-        function addSerial(msg) {
-            var textarea = document.getElementById('outputArea');
-            textarea.value += msg;
-            textarea.scrollTop = textarea.scrollHeight;
-        }
-
-        async function sendSerial() {
-            var text = document.getElementById('sendInput').value;
-            document.getElementById('sendInput').value = "";
-
-            const encoder = new TextEncoder();
-            const writer = port.writable.getWriter();
-            await writer.write(encoder.encode(text + "\n"));
-            writer.releaseLock();
-        }
+        };
     </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+    </script>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; }
+        .problem-container { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .answer-container { background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        .ans-heading::before { content: "▶ "; color: #3b82f6; font-size: 0.8em; transition: transform 0.2s; display: inline-block; }
+        details[open] .ans-heading::before { transform: rotate(90deg); }
+        .vector-canvas { background-color: #fff; border: 1px solid #e2e8f0; border-radius: 4px; }
+    </style>
 </head>
+<body class="bg-slate-50 text-slate-800 p-6 max-w-4xl mx-auto">
 
-<body>
-    <h1>Web Serial API Console</h1>
-    <button onclick="onConnectButtonClick()">Connect</button> 115200 Only
-    <br />
+    <h1 class="text-3xl font-bold text-center mb-8 pb-4 border-b-2 border-slate-300">交流回路のベクトル計算演習</h1>
+    <p class="mb-6 text-slate-600 leading-relaxed text-sm sm:text-base">
+        電気工学などで用いられる、正弦波交流のベクトル表示に関する演習問題です。<br>
+        ※本プリントでは、複素数は使用せず、平面ベクトルとしての極座標表示（大きさと角度）および直交座標表示（$x$成分と$y$成分）を用いて計算を行います。<br>
+        また、<strong class="text-slate-800">ベクトルの大きさは「最大値」</strong>を用いることとします。角度は弧度法（ラジアン）で表します。
+    </p>
 
-    <input type="text" id="sendInput" />
-    <input type="button" value="Send" onclick="sendSerial();" />
-    <br />
-    <textarea cols="80" rows="6" id="outputArea" readonly></textarea>
+    <!-- 第1問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第1問：瞬時値からベクトル表示への変換</h3>
+        <p class="mb-2">ある交流回路における電圧 $v(t)$ と電流 $i(t)$ の瞬時値が、それぞれ以下のように与えられている。</p>
+        <ul class="list-disc list-inside mb-4 pl-4 space-y-1">
+            <li>$v(t) = 100 \sin \left( \omega t + \frac{\pi}{6} \right) \text{ [V]}$</li>
+            <li>$i(t) = 10 \sin \left( \omega t - \frac{\pi}{6} \right) \text{ [A]}$</li>
+        </ul>
+        <div class="space-y-2 pl-2">
+            <p>(1) 電圧 $v(t)$ と電流 $i(t)$ の最大値 $V_m$ と $I_m$ を求めなさい。</p>
+            <p>(2) $\sin \omega t$ を基準としたときの電圧ベクトル $\dot{V}$ と電流ベクトル $\dot{I}$ を、極座標表示（$r \angle \theta$）で表しなさい。</p>
+            <p>(3) 電圧ベクトル $\dot{V}$ と電流ベクトル $\dot{I}$ を直交座標表示で表しなさい。</p>
+            <p>(4) 電圧を基準としたときの、電流の位相差を求め、進み・遅れを答えなさい。</p>
+        </div>
 
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第1問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 最大値</strong>： $\mathbf{V_m = 100 \text{ [V]}}$、 $\mathbf{I_m = 10 \text{ [A]}}$</p>
+                <p><strong>(2) 極座標表示</strong>： $\mathbf{\dot{V} = 100 \angle \frac{\pi}{6}}$、 $\mathbf{\dot{I} = 10 \angle -\frac{\pi}{6}}$</p>
+                <p><strong>(3) 直交座標表示</strong>：<br>
+                $\dot{V} = \mathbf{(50\sqrt{3}, 50) \text{ [V]}}$<br>
+                $\dot{I} = \mathbf{(5\sqrt{3}, -5) \text{ [A]}}$</p>
+                <p><strong>(4) 位相差</strong>： $\frac{\pi}{6} - \left(-\frac{\pi}{6}\right) = \mathbf{\frac{\pi}{3} \text{ [rad]}}$。電流は $\mathbf{\frac{\pi}{3} \text{ [rad]}}$ 遅れている。</p>
+                
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】※電流ベクトルは視認性のため長さを拡大して表示しています</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="1" 
+                    data-vectors='[{"x": 86.6, "y": 50, "color": "#ef4444", "label": "V"}, {"x": 60.6, "y": -35, "color": "#3b82f6", "label": "I"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第2問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第2問：直交座標表示でのベクトルの加算</h3>
+        <p class="mb-2">分岐点で合流する電流ベクトルが $\dot{I_1} = (6, 8) \text{ [A]}$, $\dot{I_2} = (4, -4) \text{ [A]}$ である。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) 全電流ベクトル $\dot{I} = \dot{I_1} + \dot{I_2}$ を直交座標表示で求めなさい。</p>
+            <p>(2) 電流 $\dot{I_1}$ の最大値 $I_1$ を求めなさい。</p>
+            <p>(3) 全電流 $\dot{I}$ の最大値 $I$ を求めなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第2問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 全電流ベクトル</strong>： $\dot{I} = (6 + 4, 8 - 4) = \mathbf{(10, 4) \text{ [A]}}$</p>
+                <p><strong>(2) $\dot{I_1}$ の最大値</strong>： $I_1 = \sqrt{6^2 + 8^2} = \mathbf{10 \text{ [A]}}$</p>
+                <p><strong>(3) $\dot{I}$ の最大値</strong>： $I = \sqrt{10^2 + 4^2} = \sqrt{116} = \mathbf{2\sqrt{29} \text{ [A]}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="10" 
+                    data-vectors='[{"x": 6, "y": 8, "color": "#3b82f6", "label": "I1"}, {"x": 4, "y": -4, "color": "#10b981", "label": "I2"}, {"x": 10, "y": 4, "color": "#ef4444", "label": "I (合成)"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第3問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第3問：極座標表示から瞬時値への変換</h3>
+        <p class="mb-2">電圧ベクトル $\dot{V} = 141 \angle \frac{\pi}{4} \text{ [V]}$、電流ベクトル $\dot{I} = 14.1 \angle -\frac{\pi}{3} \text{ [A]}$ である。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) 電圧 $v(t)$ と電流 $i(t)$ の瞬時値の式を書きなさい。</p>
+            <p>(2) 電圧と電流の位相差を求め、電圧は電流に対して進みか遅れか答えなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第3問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 瞬時値の式</strong>：<br>
+                $\mathbf{v(t) = 141 \sin \left( \omega t + \frac{\pi}{4} \right) \text{ [V]}}$<br>
+                $\mathbf{i(t) = 14.1 \sin \left( \omega t - \frac{\pi}{3} \right) \text{ [A]}}$</p>
+                <p><strong>(2) 位相差</strong>： $\frac{\pi}{4} - \left(-\frac{\pi}{3}\right) = \mathbf{\frac{7\pi}{12} \text{ [rad]}}$。<strong>電圧は電流に対して進んでいる</strong>。</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】※電流ベクトルは視認性のため長さを拡大して表示しています</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="0.8" 
+                    data-vectors='[{"x": 99.7, "y": 99.7, "color": "#ef4444", "label": "V"}, {"x": 35, "y": -60.6, "color": "#3b82f6", "label": "I"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第4問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第4問：電圧ベクトルの加算（直列）</h3>
+        <p class="mb-2">直列の電圧ベクトルが $\dot{V_1} = (20, 15) \text{ [V]}$, $\dot{V_2} = (10, -55) \text{ [V]}$ である。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) 全体の電圧ベクトル $\dot{V} = \dot{V_1} + \dot{V_2}$ を求めなさい。</p>
+            <p>(2) 全体の電圧の最大値 $V$ を求めなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第4問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 全体の電圧ベクトル</strong>： $\dot{V} = \mathbf{(30, -40) \text{ [V]}}$</p>
+                <p><strong>(2) 最大値</strong>： $V = \sqrt{30^2 + (-40)^2} = \sqrt{2500} = \mathbf{50 \text{ [V]}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="1.5" 
+                    data-vectors='[{"x": 20, "y": 15, "color": "#3b82f6", "label": "V1"}, {"x": 10, "y": -55, "color": "#10b981", "label": "V2"}, {"x": 30, "y": -40, "color": "#ef4444", "label": "V (合成)"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第5問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第5問：直交座標表示から極座標表示への変換</h3>
+        <p class="mb-2">電流ベクトルが $\dot{I} = (-5, 5\sqrt{3}) \text{ [A]}$ と表されている。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) 最大値 $I$ を求めなさい。</p>
+            <p>(2) 極座標表示（$r \angle \theta$）で表しなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第5問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 最大値</strong>： $I = \sqrt{(-5)^2 + (5\sqrt{3})^2} = \sqrt{25 + 75} = \mathbf{10 \text{ [A]}}$</p>
+                <p><strong>(2) 極座標表示</strong>： $\theta = \frac{2\pi}{3}$ となるため、 $\mathbf{\dot{I} = 10 \angle \frac{2\pi}{3}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="8" 
+                    data-vectors='[{"x": -5, "y": 8.66, "color": "#3b82f6", "label": "I"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第6問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第6問：ベクトルの減算（電位差）</h3>
+        <p class="mb-2">2つの点A, Bの電位が、ある基準点に対してそれぞれ最大値ベクトル $\dot{E_A} = (12, 5) \text{ [V]}$, $\dot{E_B} = (4, -1) \text{ [V]}$ で与えられている。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) 点Bを基準とした点Aの電位差（電圧）ベクトル $\dot{V_{AB}} = \dot{E_A} - \dot{E_B}$ を直交座標表示で求めなさい。</p>
+            <p>(2) 電位差ベクトル $\dot{V_{AB}}$ の最大値を求めなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第6問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 電位差ベクトル</strong>： $\dot{V_{AB}} = (12 - 4, 5 - (-1)) = \mathbf{(8, 6) \text{ [V]}}$</p>
+                <p><strong>(2) 最大値</strong>： $V_{AB} = \sqrt{8^2 + 6^2} = \sqrt{100} = \mathbf{10 \text{ [V]}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="6" 
+                    data-vectors='[{"x": 12, "y": 5, "color": "#3b82f6", "label": "E_A"}, {"x": 4, "y": -1, "color": "#10b981", "label": "E_B"}, {"x": 8, "y": 6, "color": "#ef4444", "label": "V_AB (差)"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第7問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第7問：極座標表示同士の加算</h3>
+        <p class="mb-2">2つの交流電流の最大値ベクトルが極座標表示で $\dot{I_1} = 20 \angle 0 \text{ [A]}$, $\dot{I_2} = 20 \angle \frac{\pi}{2} \text{ [A]}$ と与えられている。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) $\dot{I_1}$ と $\dot{I_2}$ をそれぞれ直交座標表示に変換しなさい。</p>
+            <p>(2) 合成電流ベクトル $\dot{I} = \dot{I_1} + \dot{I_2}$ を直交座標表示で求めなさい。</p>
+            <p>(3) 合成電流ベクトル $\dot{I}$ を極座標表示で求めなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第7問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 直交座標への変換</strong>：<br>
+                $\dot{I_1} = (20\cos 0, 20\sin 0) = \mathbf{(20, 0) \text{ [A]}}$<br>
+                $\dot{I_2} = (20\cos\frac{\pi}{2}, 20\sin\frac{\pi}{2}) = \mathbf{(0, 20) \text{ [A]}}$</p>
+                <p><strong>(2) 合成電流ベクトル（直交座標）</strong>： $\dot{I} = \mathbf{(20, 20) \text{ [A]}}$</p>
+                <p><strong>(3) 合成電流ベクトル（極座標）</strong>： 大きさ $r = \sqrt{20^2 + 20^2} = 20\sqrt{2}$、角度は $\frac{\pi}{4}$ より $\mathbf{\dot{I} = 20\sqrt{2} \angle \frac{\pi}{4}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="4" 
+                    data-vectors='[{"x": 20, "y": 0, "color": "#3b82f6", "label": "I1"}, {"x": 0, "y": 20, "color": "#10b981", "label": "I2"}, {"x": 20, "y": 20, "color": "#ef4444", "label": "I (合成)"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第8問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第8問：3つのベクトルの合流（対称三相交流の基礎）</h3>
+        <p class="mb-2">ある交差点に3つの電流が流れ込んでおり、それらの最大値ベクトルは極座標表示で以下の通りである。</p>
+        <ul class="list-disc list-inside mb-4 pl-4 space-y-1">
+            <li>$\dot{I_1} = 10 \angle 0 \text{ [A]}$</li>
+            <li>$\dot{I_2} = 10 \angle \frac{2\pi}{3} \text{ [A]}$</li>
+            <li>$\dot{I_3} = 10 \angle -\frac{2\pi}{3} \text{ [A]}$</li>
+        </ul>
+        <div class="space-y-2 pl-2">
+            <p>(1) これら3つのベクトルを直交座標表示に変換しなさい。</p>
+            <p>(2) 3つの電流のベクトル和 $\dot{I_1} + \dot{I_2} + \dot{I_3}$ を直交座標表示で求めなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第8問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 直交座標への変換</strong>：<br>
+                $\dot{I_1} = \mathbf{(10, 0) \text{ [A]}}$<br>
+                $\dot{I_2} = \mathbf{(-5, 5\sqrt{3}) \text{ [A]}}$<br>
+                $\dot{I_3} = \mathbf{(-5, -5\sqrt{3}) \text{ [A]}}$</p>
+                <p><strong>(2) ベクトル和</strong>： $x$成分 $10 - 5 - 5 = 0$、$y$成分 $0 + 5\sqrt{3} - 5\sqrt{3} = 0$ より $\mathbf{(0, 0) \text{ [A]}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="8" 
+                    data-vectors='[{"x": 10, "y": 0, "color": "#3b82f6", "label": "I1"}, {"x": -5, "y": 8.66, "color": "#10b981", "label": "I2"}, {"x": -5, "y": -8.66, "color": "#f59e0b", "label": "I3"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第9問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第9問：ベクトルの定数倍と反転</h3>
+        <p class="mb-2">ある電圧ベクトルが直交座標表示で $\dot{V} = (3, -4) \text{ [V]}$ と与えられている。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) この電圧の位相を $\pi \text{ [rad]}$ だけずらした（反転させた）ベクトル $\dot{V'}$ は、元のベクトルにマイナスをつけたもの（$-\dot{V}$）に等しい。$\dot{V'}$ を直交座標表示で求めなさい。</p>
+            <p>(2) 変圧器などにより電圧の最大値が2倍になったとする。位相が変わらない場合、新しい電圧ベクトル $\dot{V_{new}}$ を直交座標表示で求めなさい。</p>
+            <p>(3) $\dot{V_{new}}$ の最大値を求めなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第9問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 位相の反転</strong>： $\dot{V'} = -\dot{V} = -(3, -4) = \mathbf{(-3, 4) \text{ [V]}}$</p>
+                <p><strong>(2) 定数倍</strong>： $\dot{V_{new}} = 2\dot{V} = 2(3, -4) = \mathbf{(6, -8) \text{ [V]}}$</p>
+                <p><strong>(3) 最大値</strong>： $V_{new} = \sqrt{6^2 + (-8)^2} = \sqrt{100} = \mathbf{10 \text{ [V]}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="8" 
+                    data-vectors='[{"x": 3, "y": -4, "color": "#94a3b8", "label": "V"}, {"x": -3, "y": 4, "color": "#3b82f6", "label": "V\u0027(反転)"}, {"x": 6, "y": -8, "color": "#ef4444", "label": "V_new(2倍)"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第10問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第10問：未知のベクトルの逆算</h3>
+        <p class="mb-2">ある回路において、合流後の全体電流の最大値ベクトルが $\dot{I} = (10, 10) \text{ [A]}$ である。合流前の枝路1に流れる電流の最大値ベクトルが $\dot{I_1} = (4, 18) \text{ [A]}$ であるとき、以下の問いに答えなさい。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) 全体電流は枝路1と枝路2の和（$\dot{I} = \dot{I_1} + \dot{I_2}$）である。枝路2に流れる電流ベクトル $\dot{I_2}$ を直交座標表示で求めなさい。</p>
+            <p>(2) 電流ベクトル $\dot{I_2}$ の最大値を求めなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第10問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 枝路2の電流ベクトル</strong>： $\dot{I_2} = \dot{I} - \dot{I_1} = (10 - 4, 10 - 18) = \mathbf{(6, -8) \text{ [A]}}$</p>
+                <p><strong>(2) 最大値</strong>： $I_2 = \sqrt{6^2 + (-8)^2} = \sqrt{100} = \mathbf{10 \text{ [A]}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="4" 
+                    data-vectors='[{"x": 4, "y": 18, "color": "#3b82f6", "label": "I1"}, {"x": 6, "y": -8, "color": "#10b981", "label": "I2(未知)"}, {"x": 10, "y": 10, "color": "#ef4444", "label": "I(全体)"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- Javascript (図画生成用) -->
+    <script>
+        // HTMLが読み込まれた後にベクトル図を描画するスクリプト
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.vector-canvas').forEach(canvas => {
+                const ctx = canvas.getContext('2d');
+                const w = canvas.width;
+                const h = canvas.height;
+                const cx = w / 2; // 原点X
+                const cy = h / 2; // 原点Y
+                const scale = parseFloat(canvas.dataset.scale || 10);
+                const vectors = JSON.parse(canvas.dataset.vectors);
+
+                // 背景のグリッド線を描画
+                ctx.beginPath();
+                ctx.strokeStyle = '#f1f5f9';
+                for(let i=0; i<=w; i+=20) { ctx.moveTo(i,0); ctx.lineTo(i,h); }
+                for(let i=0; i<=h; i+=20) { ctx.moveTo(0,i); ctx.lineTo(w,i); }
+                ctx.stroke();
+
+                // X軸・Y軸を描画
+                ctx.beginPath();
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 1;
+                ctx.moveTo(0, cy); ctx.lineTo(w, cy); // X軸
+                ctx.moveTo(cx, 0); ctx.lineTo(cx, h); // Y軸
+                ctx.stroke();
+
+                // 原点のOマーク
+                ctx.font = "12px sans-serif";
+                ctx.fillStyle = '#94a3b8';
+                ctx.fillText("O", cx - 12, cy + 14);
+
+                // 各ベクトルを描画
+                vectors.forEach(v => {
+                    const vx = v.x * scale;
+                    const vy = -v.y * scale; // ブラウザのCanvasはY軸が下向きなので反転させる
+                    const color = v.color || '#000';
+
+                    // 線の描画
+                    ctx.beginPath();
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 2;
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(cx + vx, cy + vy);
+                    ctx.stroke();
+
+                    // 矢印の先端（三角形）を描画
+                    const angle = Math.atan2(vy, vx);
+                    const headLen = 8;
+                    ctx.beginPath();
+                    ctx.fillStyle = color;
+                    ctx.moveTo(cx + vx, cy + vy);
+                    ctx.lineTo(cx + vx - headLen * Math.cos(angle - Math.PI/6), cy + vy - headLen * Math.sin(angle - Math.PI/6));
+                    ctx.lineTo(cx + vx - headLen * Math.cos(angle + Math.PI/6), cy + vy - headLen * Math.sin(angle + Math.PI/6));
+                    ctx.fill();
+
+                    // ベクトルのラベルテキストを描画
+                    ctx.font = "bold 13px sans-serif";
+                    ctx.fillStyle = color;
+                    // ベクトルの向きに合わせて文字の位置を微調整
+                    const textOffsetX = vx >= 0 ? 8 : -30;
+                    const textOffsetY = vy >= 0 ? 15 : -8;
+                    ctx.fillText(v.label, cx + vx + textOffsetX, cy + vy + textOffsetY);
+                });
+            });
+        });
+    </script>
 </body>
-
 </html>
