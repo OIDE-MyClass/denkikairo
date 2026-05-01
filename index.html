@@ -31,7 +31,7 @@
 
     <h1 class="text-3xl font-bold text-center mb-8 pb-4 border-b-2 border-slate-300">交流回路のベクトル計算演習</h1>
     <p class="mb-6 text-slate-600 leading-relaxed text-sm sm:text-base">
-        電気工学などで用いられる、正弦波交流のベクトル表示に関する演習問題です。<br>
+        電気工学などで用いられる、正弦波交流のベクトル表示に関する全20問の演習問題です。<br>
         ※本プリントでは、複素数は使用せず、平面ベクトルとしての極座標表示（大きさと角度）および直交座標表示（$x$成分と$y$成分）を用いて計算を行います。<br>
         また、<strong class="text-slate-800">ベクトルの大きさは「最大値」</strong>を用いることとします。角度は弧度法（ラジアン）で表します。
     </p>
@@ -299,6 +299,274 @@
                     <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
                     <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="4" 
                     data-vectors='[{"x": 4, "y": 18, "color": "#3b82f6", "label": "I1"}, {"x": 6, "y": -8, "color": "#10b981", "label": "I2(未知)"}, {"x": 10, "y": 10, "color": "#ef4444", "label": "I(全体)"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第11問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第11問：対称な極座標ベクトルの加算</h3>
+        <p class="mb-2">電圧ベクトルが極座標表示で $\dot{V_1} = 10 \angle \frac{\pi}{6} \text{ [V]}$、$\dot{V_2} = 10 \angle -\frac{\pi}{6} \text{ [V]}$ と与えられている。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) $\dot{V_1}$ と $\dot{V_2}$ をそれぞれ直交座標表示に変換しなさい。</p>
+            <p>(2) 合成電圧ベクトル $\dot{V} = \dot{V_1} + \dot{V_2}$ を直交座標表示で求めなさい。</p>
+            <p>(3) 合成電圧ベクトル $\dot{V}$ を極座標表示で求めなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第11問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 直交座標への変換</strong>：<br>
+                $\dot{V_1} = \left( 10\cos\frac{\pi}{6}, 10\sin\frac{\pi}{6} \right) = \mathbf{(5\sqrt{3}, 5) \text{ [V]}}$<br>
+                $\dot{V_2} = \left( 10\cos\left(-\frac{\pi}{6}\right), 10\sin\left(-\frac{\pi}{6}\right) \right) = \mathbf{(5\sqrt{3}, -5) \text{ [V]}}$</p>
+                <p><strong>(2) 合成電圧ベクトル</strong>： $\dot{V} = (5\sqrt{3} + 5\sqrt{3}, 5 - 5) = \mathbf{(10\sqrt{3}, 0) \text{ [V]}}$</p>
+                <p><strong>(3) 極座標表示</strong>： $x$成分が正で$y$成分が$0$なので、角度は $0$ となる。 $\mathbf{\dot{V} = 10\sqrt{3} \angle 0}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="6" 
+                    data-vectors='[{"x": 8.66, "y": 5, "color": "#3b82f6", "label": "V1", "angleLabel": "π/6", "angleRadius": 40}, {"x": 8.66, "y": -5, "color": "#10b981", "label": "V2", "angleLabel": "-π/6", "angleRadius": 40}, {"x": 17.32, "y": 0, "color": "#ef4444", "label": "V (合成)"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第12問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第12問：ベクトルの位相の進み（90度回転）</h3>
+        <p class="mb-2">電流ベクトルが直交座標表示で $\dot{I} = (8, 6) \text{ [A]}$ と与えられている。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) このベクトルの位相を $\frac{\pi}{2} \text{ [rad]}$ （90度）進ませた（反時計回りに回転させた）新しいベクトル $\dot{I'}$ を直交座標表示で求めなさい。</p>
+            <p class="text-sm text-slate-500">※ヒント：直交座標 $(x, y)$ を原点中心に90度反時計回りに回転させると $(-y, x)$ になります。</p>
+            <p>(2) 回転後のベクトル $\dot{I'}$ の最大値を求めなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第12問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 回転後のベクトル</strong>： $(x, y) = (8, 6)$ を90度進ませると $(-y, x)$ になるため、 $\mathbf{\dot{I'} = (-6, 8) \text{ [A]}}$</p>
+                <p><strong>(2) 最大値</strong>： $I' = \sqrt{(-6)^2 + 8^2} = \sqrt{100} = \mathbf{10 \text{ [A]}}$ （回転してもベクトルの大きさは変わらない）</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="8" 
+                    data-vectors='[{"x": 8, "y": 6, "color": "#94a3b8", "label": "I"}, {"x": -6, "y": 8, "color": "#ef4444", "label": "I\u0027 (+90°)"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第13問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第13問：ベクトルの位相の遅れ（90度回転）</h3>
+        <p class="mb-2">電圧ベクトルが直交座標表示で $\dot{V} = (-10, 0) \text{ [V]}$ と与えられている。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) このベクトルの位相を $\frac{\pi}{2} \text{ [rad]}$ （90度）遅らせた（時計回りに回転させた）新しいベクトル $\dot{V'}$ を直交座標表示で求めなさい。</p>
+            <p class="text-sm text-slate-500">※ヒント：直交座標 $(x, y)$ を原点中心に90度時計回りに回転させると $(y, -x)$ になります。</p>
+            <p>(2) $\dot{V'}$ を極座標表示で表しなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第13問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 回転後のベクトル</strong>： $(x, y) = (-10, 0)$ を90度遅らせると $(y, -x)$ になるため、 $\mathbf{\dot{V'} = (0, 10) \text{ [V]}}$</p>
+                <p><strong>(2) 極座標表示</strong>： $x=0, y=10$ より、$y$軸の正の方向を向いている。大きさは $10$、角度は $\frac{\pi}{2}$。 $\mathbf{\dot{V'} = 10 \angle \frac{\pi}{2}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="8" 
+                    data-vectors='[{"x": -10, "y": 0, "color": "#94a3b8", "label": "V", "angleLabel": "π", "angleRadius": 20}, {"x": 0, "y": 10, "color": "#ef4444", "label": "V\u0027 (-90°)", "angleLabel": "π/2", "angleRadius": 30}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第14問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第14問：三相交流の線間電圧（ベクトルの減算）</h3>
+        <p class="mb-2">三相交流回路において、相電圧ベクトルが $\dot{E_a} = 10 \angle 0 \text{ [V]}$、$\dot{E_b} = 10 \angle -\frac{2\pi}{3} \text{ [V]}$ で与えられている。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) $\dot{E_a}$ と $\dot{E_b}$ を直交座標表示に変換しなさい。</p>
+            <p>(2) 線間電圧ベクトル $\dot{V_{ab}} = \dot{E_a} - \dot{E_b}$ を直交座標表示で求めなさい。</p>
+            <p>(3) 線間電圧ベクトル $\dot{V_{ab}}$ を極座標表示で求めなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第14問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 直交座標への変換</strong>：<br>
+                $\dot{E_a} = \mathbf{(10, 0) \text{ [V]}}$<br>
+                $\dot{E_b} = \left( 10\cos\left(-\frac{2\pi}{3}\right), 10\sin\left(-\frac{2\pi}{3}\right) \right) = \mathbf{(-5, -5\sqrt{3}) \text{ [V]}}$</p>
+                <p><strong>(2) 線間電圧ベクトル</strong>： $\dot{V_{ab}} = (10 - (-5), 0 - (-5\sqrt{3})) = \mathbf{(15, 5\sqrt{3}) \text{ [V]}}$</p>
+                <p><strong>(3) 極座標表示</strong>： 大きさ $V_{ab} = \sqrt{15^2 + (5\sqrt{3})^2} = \sqrt{225 + 75} = \sqrt{300} = 10\sqrt{3}$。<br>
+                $\cos\theta = \frac{15}{10\sqrt{3}} = \frac{3}{2\sqrt{3}} = \frac{\sqrt{3}}{2}$ より角度は $\frac{\pi}{6}$。<br>
+                よって $\mathbf{\dot{V_{ab}} = 10\sqrt{3} \angle \frac{\pi}{6}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="5" 
+                    data-vectors='[{"x": 10, "y": 0, "color": "#3b82f6", "label": "E_a"}, {"x": -5, "y": -8.66, "color": "#10b981", "label": "E_b", "angleLabel": "-2π/3", "angleRadius": 20}, {"x": 15, "y": 8.66, "color": "#ef4444", "label": "V_ab", "angleLabel": "π/6", "angleRadius": 30}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第15問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第15問：直交座標から極座標への変換（第4象限）</h3>
+        <p class="mb-2">電圧ベクトルが直交座標表示で $\dot{V} = (10, -10\sqrt{3}) \text{ [V]}$ と与えられている。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) この電圧ベクトルの最大値 $V$ を求めなさい。</p>
+            <p>(2) この電圧ベクトルを極座標表示（$r \angle \theta$）で表しなさい。ただし角度 $\theta$ は $-\pi < \theta \le \pi$ の範囲とする。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第15問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 最大値</strong>： $V = \sqrt{10^2 + (-10\sqrt{3})^2} = \sqrt{100 + 300} = \mathbf{20 \text{ [V]}}$</p>
+                <p><strong>(2) 極座標表示</strong>： $\cos\theta = \frac{10}{20} = \frac{1}{2}$、$\sin\theta = \frac{-10\sqrt{3}}{20} = -\frac{\sqrt{3}}{2}$ となり、第4象限にあるため角度は $-\frac{\pi}{3}$。<br>
+                よって、 $\mathbf{\dot{V} = 20 \angle -\frac{\pi}{3}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="4" 
+                    data-vectors='[{"x": 10, "y": -17.32, "color": "#3b82f6", "label": "V", "angleLabel": "-π/3", "angleRadius": 30}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第16問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第16問：ベクトルの和と差</h3>
+        <p class="mb-2">2つの電流ベクトルが直交座標表示で $\dot{I_1} = (4, 3) \text{ [A]}$、$\dot{I_2} = (4, -3) \text{ [A]}$ と与えられている。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) 2つのベクトルの和 $\dot{I_{add}} = \dot{I_1} + \dot{I_2}$ を直交座標表示で求めなさい。</p>
+            <p>(2) 2つのベクトルの差 $\dot{I_{sub}} = \dot{I_1} - \dot{I_2}$ を直交座標表示で求めなさい。</p>
+            <p>(3) $\dot{I_{add}}$ と $\dot{I_{sub}}$ の最大値をそれぞれ求めなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第16問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 和のベクトル</strong>： $\dot{I_{add}} = (4 + 4, 3 + (-3)) = \mathbf{(8, 0) \text{ [A]}}$</p>
+                <p><strong>(2) 差のベクトル</strong>： $\dot{I_{sub}} = (4 - 4, 3 - (-3)) = \mathbf{(0, 6) \text{ [A]}}$</p>
+                <p><strong>(3) 最大値</strong>： $I_{add} = \sqrt{8^2 + 0^2} = \mathbf{8 \text{ [A]}}$、 $I_{sub} = \sqrt{0^2 + 6^2} = \mathbf{6 \text{ [A]}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="10" 
+                    data-vectors='[{"x": 4, "y": 3, "color": "#3b82f6", "label": "I1"}, {"x": 4, "y": -3, "color": "#10b981", "label": "I2"}, {"x": 8, "y": 0, "color": "#ef4444", "label": "I_add"}, {"x": 0, "y": 6, "color": "#f59e0b", "label": "I_sub"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第17問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第17問：未知の電圧ベクトルの逆算（極座標への変換）</h3>
+        <p class="mb-2">全体の電圧が $\dot{V} = (20, 20) \text{ [V]}$ で、直列に繋がれた素子1の電圧が $\dot{V_1} = (20, 0) \text{ [V]}$ である。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) もう一つの素子2にかかる電圧ベクトル $\dot{V_2}$ を直交座標表示で求めなさい。（$\dot{V} = \dot{V_1} + \dot{V_2}$）</p>
+            <p>(2) 電圧ベクトル $\dot{V_2}$ を極座標表示で表しなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第17問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) $\dot{V_2}$ の直交座標表示</strong>： $\dot{V_2} = \dot{V} - \dot{V_1} = (20 - 20, 20 - 0) = \mathbf{(0, 20) \text{ [V]}}$</p>
+                <p><strong>(2) $\dot{V_2}$ の極座標表示</strong>： 大きさは $20$、$y$軸正の方向なので角度は $\frac{\pi}{2}$。<br>
+                よって、 $\mathbf{\dot{V_2} = 20 \angle \frac{\pi}{2}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="4" 
+                    data-vectors='[{"x": 20, "y": 0, "color": "#3b82f6", "label": "V1"}, {"x": 0, "y": 20, "color": "#10b981", "label": "V2", "angleLabel": "π/2", "angleRadius": 30}, {"x": 20, "y": 20, "color": "#ef4444", "label": "V (全体)"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第18問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第18問：直交座標から極座標への変換（第3象限）</h3>
+        <p class="mb-2">電流ベクトルが直交座標表示で $\dot{I} = (-5\sqrt{3}, -5) \text{ [A]}$ と与えられている。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) この電流ベクトルの最大値 $I$ を求めなさい。</p>
+            <p>(2) この電流ベクトルを極座標表示で表しなさい。ただし角度 $\theta$ は $-\pi < \theta \le \pi$ の範囲とする。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第18問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 最大値</strong>： $I = \sqrt{(-5\sqrt{3})^2 + (-5)^2} = \sqrt{75 + 25} = \mathbf{10 \text{ [A]}}$</p>
+                <p><strong>(2) 極座標表示</strong>： $\cos\theta = -\frac{5\sqrt{3}}{10} = -\frac{\sqrt{3}}{2}$、$\sin\theta = -\frac{5}{10} = -\frac{1}{2}$ となり、第3象限にあるため角度は $-\frac{5\pi}{6}$。<br>
+                よって、 $\mathbf{\dot{I} = 10 \angle -\frac{5\pi}{6}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="8" 
+                    data-vectors='[{"x": -8.66, "y": -5, "color": "#3b82f6", "label": "I", "angleLabel": "-5π/6", "angleRadius": 30}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第19問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第19問：瞬時値の加算</h3>
+        <p class="mb-2">2つの電圧の瞬時値が $v_1(t) = 10 \sin\left(\omega t + \frac{\pi}{3}\right) \text{ [V]}$、$v_2(t) = 10 \sin\left(\omega t - \frac{\pi}{3}\right) \text{ [V]}$ と与えられている。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) それぞれの電圧ベクトル $\dot{V_1}, \dot{V_2}$ を極座標表示および直交座標表示で表しなさい。</p>
+            <p>(2) 合成電圧ベクトル $\dot{V} = \dot{V_1} + \dot{V_2}$ を直交座標表示で求めなさい。</p>
+            <p>(3) 合成電圧ベクトル $\dot{V}$ を極座標表示に変換し、合成電圧の瞬時値 $v(t)$ の式を書きなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第19問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) ベクトル表示</strong>：<br>
+                極座標表示： $\mathbf{\dot{V_1} = 10 \angle \frac{\pi}{3}}$、 $\mathbf{\dot{V_2} = 10 \angle -\frac{\pi}{3}}$<br>
+                直交座標表示： $\mathbf{\dot{V_1} = (5, 5\sqrt{3}) \text{ [V]}}$、 $\mathbf{\dot{V_2} = (5, -5\sqrt{3}) \text{ [V]}}$</p>
+                <p><strong>(2) 合成電圧ベクトル</strong>： $\dot{V} = (5 + 5, 5\sqrt{3} - 5\sqrt{3}) = \mathbf{(10, 0) \text{ [V]}}$</p>
+                <p><strong>(3) 瞬時値の式</strong>： $\dot{V} = (10, 0)$ は極座標で $10 \angle 0$ となる。瞬時値の式に戻すと、<br>
+                $\mathbf{v(t) = 10 \sin(\omega t) \text{ [V]}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="8" 
+                    data-vectors='[{"x": 5, "y": 8.66, "color": "#3b82f6", "label": "V1", "angleLabel": "π/3", "angleRadius": 30}, {"x": 5, "y": -8.66, "color": "#10b981", "label": "V2", "angleLabel": "-π/3", "angleRadius": 30}, {"x": 10, "y": 0, "color": "#ef4444", "label": "V (合成)"}]'></canvas>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- 第20問 -->
+    <div class="problem-container">
+        <h3 class="text-lg font-bold mb-2 text-slate-800">第20問：3つのベクトルの総合計算</h3>
+        <p class="mb-2">ある回路に流れ込む3つの電流ベクトルが極座標表示で $\dot{I_1} = 10 \angle 0 \text{ [A]}$、$\dot{I_2} = 10 \angle \frac{\pi}{2} \text{ [A]}$、$\dot{I_3} = 10\sqrt{2} \angle -\frac{3\pi}{4} \text{ [A]}$ と与えられている。</p>
+        <div class="space-y-2 pl-2">
+            <p>(1) 3つのベクトルをそれぞれ直交座標表示に変換しなさい。</p>
+            <p>(2) 3つの電流のベクトル和 $\dot{I} = \dot{I_1} + \dot{I_2} + \dot{I_3}$ を求めなさい。</p>
+        </div>
+
+        <details class="answer-container mt-6">
+            <summary class="text-lg font-bold ans-heading cursor-pointer select-none">第20問 解答と図解</summary>
+            <div class="space-y-3 mt-4 pt-3 border-t border-slate-200">
+                <p><strong>(1) 直交座標への変換</strong>：<br>
+                $\dot{I_1} = \mathbf{(10, 0) \text{ [A]}}$<br>
+                $\dot{I_2} = \mathbf{(0, 10) \text{ [A]}}$<br>
+                $\dot{I_3} = \left( 10\sqrt{2}\cos\left(-\frac{3\pi}{4}\right), 10\sqrt{2}\sin\left(-\frac{3\pi}{4}\right) \right) = \left( 10\sqrt{2} \times \left(-\frac{1}{\sqrt{2}}\right), 10\sqrt{2} \times \left(-\frac{1}{\sqrt{2}}\right) \right) = \mathbf{(-10, -10) \text{ [A]}}$</p>
+                <p><strong>(2) ベクトル和</strong>：<br>
+                $x$成分：$10 + 0 + (-10) = 0$<br>
+                $y$成分：$0 + 10 + (-10) = 0$<br>
+                よって、 $\mathbf{(0, 0) \text{ [A]}}$</p>
+
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-slate-500 mb-1">【ベクトル図】</p>
+                    <canvas class="vector-canvas mx-auto" width="240" height="200" data-scale="6" 
+                    data-vectors='[{"x": 10, "y": 0, "color": "#3b82f6", "label": "I1"}, {"x": 0, "y": 10, "color": "#10b981", "label": "I2", "angleLabel": "π/2", "angleRadius": 20}, {"x": -10, "y": -10, "color": "#f59e0b", "label": "I3", "angleLabel": "-3π/4", "angleRadius": 30}]'></canvas>
                 </div>
             </div>
         </details>
